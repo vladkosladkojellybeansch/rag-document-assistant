@@ -5,3 +5,4 @@ pypdf
 sentence-transformers
 chromadb
 openai
+pandas

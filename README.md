@@ -1,20 +1,12 @@
-# RAG Document Assistant
+# AI Portfolio: RAG and Automation
 
-A Python FastAPI application for uploading PDF/TXT documents and answering questions from retrieved evidence. It uses local `sentence-transformers` embeddings and persistent ChromaDB storage, displays source excerpts, and can optionally use an OpenAI model to synthesize a concise evidence-grounded answer.
+This repository contains two beginner-friendly AI/software portfolio projects built with Python and FastAPI.
 
-## Features
+## 1. RAG Document Assistant
 
-- Upload PDF and TXT documents
-- Extract and chunk document text with overlap
-- Create local embeddings using `all-MiniLM-L6-v2`
-- Store and search vectors in ChromaDB
-- Simple web interface and FastAPI endpoints
-- Show document name, page number, and retrieved excerpts
-- Optional LLM synthesis with few-shot answer-format examples
-- Do not request or reveal chain-of-thought; provide concise sourced answers instead
-- Evaluate answers using expected terms and groundedness
+`rag_document_assistant.py` uploads PDF or TXT files, chunks the extracted text, stores local embeddings in ChromaDB, retrieves relevant excerpts, and returns source-grounded answers.
 
-## Setup
+Run it:
 
 ```bash
 pip install -r requirements.txt
@@ -23,9 +15,24 @@ uvicorn rag_document_assistant:app --reload
 
 Open `http://127.0.0.1:8000`.
 
-## Optional LLM setup
+Main endpoints: `GET /health`, `POST /upload`, `POST /ask`, and `POST /evaluate`.
 
-The app works without an API key by returning retrieved evidence. To enable generated grounded answers:
+## 2. Auditable AI CSV Automation Tool
+
+`ai_automation_tool.py` ingests a CSV, classifies and summarises selected text columns, and creates a downloadable audit CSV. The audit output keeps the source text hash, timestamp, provider/model, prompt version, raw model response, parsed result, status, and error field for every row.
+
+Run it separately on port 8001:
+
+```bash
+uvicorn ai_automation_tool:app --reload --port 8001
+```
+
+Open `http://127.0.0.1:8001`, upload `examples/sample_support_tickets.csv`, select `subject` and `message`, then process the file.
+
+### Processing modes
+
+- **Local deterministic mode:** runs with no API key. It uses transparent keyword rules and extractive summaries, making it useful for testing the workflow and audit output.
+- **OpenAI mode:** set `OPENAI_API_KEY`, select OpenAI in the interface, and the app uses a few-shot prompt to return strict JSON: a category, concise summary, confidence, and evidence phrases.
 
 ```bash
 export OPENAI_API_KEY="your-key"
@@ -39,21 +46,12 @@ $env:OPENAI_API_KEY="your-key"
 $env:OPENAI_MODEL="gpt-4o-mini"
 ```
 
-## API
+The prompt deliberately requests final structured outputs rather than private chain-of-thought. The audit log records observable input/output evidence so results can be reviewed.
 
-- `GET /health` — service status and indexed chunk count
-- `POST /upload` — multipart upload of a `.pdf` or `.txt` file
-- `POST /ask` — JSON: `{"question": "...", "top_k": 5}`
-- `POST /evaluate` — JSON list of `{"question": "...", "expected_answer_contains": ["term"]}`
-
-## Evaluation example
+## Shared setup
 
 ```bash
-curl -X POST http://127.0.0.1:8000/evaluate \
-  -H "Content-Type: application/json" \
-  -d '[{"question":"What is the refund deadline?","expected_answer_contains":["30 days"]}]'
+pip install -r requirements.txt
 ```
 
-## Security
-
-Do not commit `.env`, API keys, uploaded documents, or the local `data/` vector-store directory. They are excluded by `.gitignore`.
+The `.gitignore` excludes `.env`, local vector stores, uploaded documents, generated outputs, virtual environments, and caches. Never commit API keys or private documents.
