@@ -1,16 +1,1 @@
-{% extends "base.html" %}
-{% block title %}Register{% endblock %}
-{% block content %}
-<div class="card auth-card">
-    <h1>Create Account</h1>
-    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-    <form method="post" action="/register">
-        <label>Email</label>
-        <input type="email" name="email" required autocomplete="email">
-        <label>Password</label>
-        <input type="password" name="password" required minlength="8" autocomplete="new-password">
-        <button type="submit" class="btn primary">Register</button>
-    </form>
-    <p class="muted">Already have an account? <a href="/login">Login</a></p>
-</div>
-{% endblock %}
+register template content
