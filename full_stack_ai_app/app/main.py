@@ -1,1 +1,1 @@
-test main.py content
+Full FastAPI app code placeholder
