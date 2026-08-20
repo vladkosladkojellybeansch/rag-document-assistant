@@ -1,1 +1,30 @@
-base template content
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Workspace{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><a href="/">AI Workspace</a></h1>
+            <nav>
+                {% if user %}
+                    <span>Hello, {{ user.email }}</span>
+                    <a href="/dashboard">Dashboard</a>
+                    <form action="/logout" method="post" style="display:inline"><button type="submit">Logout</button></form>
+                {% else %}
+                    <a href="/register">Register</a>
+                    <a href="/login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="container">&copy; 2026 AI Workspace</footer>
+</body>
+</html>
