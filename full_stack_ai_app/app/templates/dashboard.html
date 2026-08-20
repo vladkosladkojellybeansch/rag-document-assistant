@@ -1,1 +1,30 @@
-dashboard template content
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Your AI Workspace</h2>
+<form method="post" action="/draft" class="card">
+    <h3>Generate new draft</h3>
+    <label>Task type<select name="task_type" required>{% for t in task_types %}<option value="{{ t }}">{{ t.replace('_', ' ').title() }}</option>{% endfor %}</select></label>
+    <label>Notes / rough input<textarea name="input_notes" rows="6" placeholder="Paste bullet points, rough ideas, or key facts here..." required></textarea></label>
+    <button type="submit">Generate draft</button>
+</form>
+
+<section>
+    <h3>History</h3>
+    {% if drafts %}
+        {% for d in drafts %}
+        <article class="card draft">
+            <header><span class="badge">{{ d.task_type.replace('_', ' ').title() }}</span> <time>{{ d.created_at.strftime('%Y-%m-%d %H:%M') }}</time></header>
+            <details>
+                <summary>Input notes</summary><pre>{{ d.input_notes }}</pre>
+            </details>
+            <details open>
+                <summary>Generated draft</summary><pre>{{ d.generated_text }}</pre>
+            </details>
+        </article>
+        {% endfor %}
+    {% else %}
+        <p class="muted">No drafts yet. Create your first one above.</p>
+    {% endif %}
+</section>
+{% endblock %}
